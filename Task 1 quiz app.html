@@ -1,0 +1,374 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Quiz App</title>
+
+<style>
+*{
+    box-sizing: border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 15px;
+}
+
+/* ================= QUIZ CONTAINER ================= */
+.quiz-container{
+    background: white;
+    padding: 25px;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    position: relative;
+}
+
+/* ================= DARK MODE BUTTON ================= */
+.toggle{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* ================= PROGRESS BAR ================= */
+.progress-bar{
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+#progress{
+    height: 100%;
+    width: 0%;
+    background: #4facfe;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+/* ================= QUESTION ================= */
+#question{
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+/* ================= OPTIONS ================= */
+#options button{
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    border: none;
+    border-radius: 6px;
+    background: #f1f1f1;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#options button:hover{
+    background: #4facfe;
+    color: white;
+}
+
+/* ================= FEEDBACK ================= */
+#feedback{
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+/* ================= TIMER ================= */
+#timer{
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* ================= BUTTONS ================= */
+.buttons{
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.buttons button{
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #4facfe;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.buttons button:hover{
+    background: #00c6ff;
+}
+
+/* ================= RESULT ================= */
+.hidden{
+    display: none;
+}
+
+#result-box h2{
+    margin-bottom: 15px;
+}
+
+/* ================= DARK MODE ================= */
+.dark{
+    background: #121212;
+    color: white;
+}
+
+.dark .quiz-container{
+    background: #1e1e1e;
+}
+
+.dark #options button{
+    background: #333;
+    color: white;
+}
+
+.dark .buttons button{
+    background: #555;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 480px){
+    #question{
+        font-size: 18px;
+    }
+
+    #options button{
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .buttons{
+        flex-direction: column;
+    }
+
+    .toggle{
+        font-size: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+    <button class="toggle" onclick="toggleDarkMode()">🌙</button>
+
+    <h1>Quiz Application</h1>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div id="progress"></div>
+    </div>
+
+    <!-- Timer -->
+    <p id="timer">Time Left: 10s</p>
+
+    <div id="quiz-box">
+        <h2 id="question"></h2>
+        <div id="options"></div>
+        <p id="feedback"></p>
+
+        <div class="buttons">
+            <button onclick="prevQuestion()">Previous</button>
+            <button onclick="nextQuestion()">Next</button>
+        </div>
+    </div>
+
+    <div id="result-box" class="hidden">
+        <h2>Quiz Completed 🎉</h2>
+        <p id="score"></p>
+        <button onclick="restartQuiz()">Restart</button>
+    </div>
+</div>
+
+<script>
+const quizData = [
+    {
+        question: "What does HTML stand for?",
+        options: ["Hyper Text Markup Language", "High Text Machine Language", "Hyperlinks Text Mark Language", "Home Tool Markup Language"],
+        answer: 0
+    },
+    {
+        question: "Which language is used for styling web pages?",
+        options: ["HTML", "JQuery", "CSS", "XML"],
+        answer: 2
+    },
+    {
+        question: "Which language adds interactivity to websites?",
+        options: ["HTML", "CSS", "Python", "JavaScript"],
+        answer: 3
+    },
+    {
+        question: "Which loop is guaranteed to execute at least once?",
+        options:["dowhile loop","for loop","while loop","forin loop"],
+        answer:0
+
+    },
+    {
+        question:"what is one of the variable declaration",
+        options:["var a=10","int b","float c=12","str bookname=hello"],
+        answer:0
+    },
+    {
+        question:"Which keyword is used to create a function in javascript",
+        options:["fun","def","function","define"],
+        answer:2
+    },
+    {
+        question:"Which operator is used to compare two values?",
+        options:["===","!=","<=","=="],
+        answer:3
+    },
+    {
+        question:"What is the output of: print(5 + 2 * 3) in Python?",
+        options:["21","11","16","42"],
+        answer:1
+    },
+    {
+        question:"which one is not a decision making",
+        options:["if","else","for","swicth"],
+        answer:2
+    },
+    {
+        question: "Which language is used for stucture of web pages?",
+        options: ["HTML", "JQuery", "CSS", "XML"],
+        answer: 0
+    },
+ 
+    {
+        question: "Which loop executes at least once?",
+        options: ["do while", "for", "while", "for in"],
+        answer: 0
+    },
+    {
+        question: "Which is a JavaScript variable declaration?",
+        options: ["var a = 10", "int b", "float c", "str name"],
+        answer: 0
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let timeLeft = 10;
+let timer;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const feedbackEl = document.getElementById("feedback");
+const timerEl = document.getElementById("timer");
+const progressEl = document.getElementById("progress");
+const quizBox = document.getElementById("quiz-box");
+const resultBox = document.getElementById("result-box");
+const scoreEl = document.getElementById("score");
+
+loadQuestion();
+
+function loadQuestion(){
+    clearInterval(timer);
+    timeLeft = 10;
+    timerEl.textContent = `Time Left: ${timeLeft}s`;
+    startTimer();
+
+    feedbackEl.textContent = "";
+    optionsEl.innerHTML = "";
+
+    const q = quizData[currentQuestion];
+    questionEl.textContent = q.question;
+
+    q.options.forEach((opt, index)=>{
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = ()=>checkAnswer(index);
+        optionsEl.appendChild(btn);
+    });
+
+    updateProgress();
+}
+
+function startTimer(){
+    timer = setInterval(()=>{
+        timeLeft--;
+        timerEl.textContent = `Time Left: ${timeLeft}s`;
+        if(timeLeft === 0){
+            clearInterval(timer);
+            nextQuestion();
+        }
+    },1000);
+}
+
+function checkAnswer(index){
+    clearInterval(timer);
+    if(index === quizData[currentQuestion].answer){
+        feedbackEl.textContent = "Correct ✔";
+        feedbackEl.style.color = "green";
+        score++;
+    } else {
+        feedbackEl.textContent = "Wrong ✘";
+        feedbackEl.style.color = "red";
+    }
+}
+
+function nextQuestion(){
+    if(currentQuestion < quizData.length - 1){
+        currentQuestion++;
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function prevQuestion(){
+    if(currentQuestion > 0){
+        currentQuestion--;
+        loadQuestion();
+    }
+}
+
+function updateProgress(){
+    progressEl.style.width = ((currentQuestion + 1) / quizData.length) * 100 + "%";
+}
+
+function showResult(){
+    quizBox.classList.add("hidden");
+    resultBox.classList.remove("hidden");
+    scoreEl.textContent = `Your Score: ${score} / ${quizData.length}`;
+}
+
+function restartQuiz(){
+    currentQuestion = 0;
+    score = 0;
+    quizBox.classList.remove("hidden");
+    resultBox.classList.add("hidden");
+    loadQuestion();
+}
+
+function toggleDarkMode(){
+    document.body.classList.toggle("dark");
+}
+</script>
+
+</body>
+</html>
