@@ -20,4 +20,5 @@ HTML
 CSS (Flexbox, Grid, Media Queries)
 JavaScript (DOM Manipulation)
 Output:
-Screenshots are attached to the file.
+![Image](https://github.com/user-attachments/assets/7598633c-9907-43b7-a9ff-fb2f5b01f8f9)
+![Image](https://github.com/user-attachments/assets/ecbf4f49-ea59-4b82-9483-a79e19254d98)
